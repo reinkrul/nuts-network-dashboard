@@ -4,6 +4,8 @@ This is a dashboard for the Nuts Network. It shows information about the network
 
 It gets its data from a Nuts node's diagnostics endpoint.
 
+![Screenshot](screenshot.png)
+
 ## Configuration
 
 The dashboard can be configured using environment variables:
