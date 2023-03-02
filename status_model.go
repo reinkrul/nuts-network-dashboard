@@ -10,11 +10,11 @@ type DiagnosticsResponse struct {
 
 type NetworkInfo struct {
 	NetworkConnections NetworkConnectionsInfo `json:"connections"`
+	State              NetworkStateInfo       `json:"state"`
 }
 
 type NetworkConnectionsInfo struct {
-	PeerCount int              `json:"connected_peers_count"`
-	State     NetworkStateInfo `json:"state"`
+	PeerCount int `json:"connected_peers_count"`
 }
 
 type NetworkStateInfo struct {

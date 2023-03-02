@@ -22,6 +22,7 @@ var resources embed.FS
 var nutsNodeEndpoint string
 var lastRetrieval atomic.Pointer[time.Time]
 var cachedData atomic.Pointer[[]Fact]
+var debug = os.Getenv("DASHBOARD_DEBUG") == "1"
 
 const maxCacheAge = 10 * time.Second
 
@@ -75,6 +76,11 @@ func readData(ctx context.Context) ([]Fact, error) {
 	if err != nil {
 		return nil, fmt.Errorf("error reading response body: %w", err)
 	}
+
+	if debug {
+		log.Printf("status response: %s\n", string(dataBytes))
+	}
+
 	var diag DiagnosticsResponse
 	err = json.Unmarshal(dataBytes, &diag)
 	if err != nil {
@@ -88,7 +94,7 @@ func readData(ctx context.Context) ([]Fact, error) {
 		},
 		{
 			Unit:  "TXs",
-			Value: diag.Network.NetworkConnections.State.TransactionCount,
+			Value: diag.Network.State.TransactionCount,
 		},
 		{
 			Unit:  "DID documents",
