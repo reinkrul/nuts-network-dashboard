@@ -21,7 +21,7 @@ FROM alpine:3.17.2
 COPY --from=builder /app /app
 
 HEALTHCHECK --start-period=10s --timeout=5s --interval=2s \
-    CMD curl -f http://localhost:8080/ || exit 1
+    CMD wget --no-verbose --tries=1 --spider http://localhost:8080/ || exit 1
 
 EXPOSE 8080
 ENTRYPOINT ["/app"]
