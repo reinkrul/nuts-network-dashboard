@@ -1,6 +1,8 @@
 <html lang="en">
 <head>
     <title>Nuts Network Dashboard</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns/dist/chartjs-adapter-date-fns.bundle.min.js"></script>
     <style>
         body {
             background-color: #f7f9fb;
@@ -21,8 +23,15 @@
             flex-wrap: wrap;
             /*align-items: stretch;*/
         }
+        #tx-chart {
+            border: #c6c8cc 1px solid;
+            border-radius: 4px;
+            background-color: #fff;
+        }
+        .chart-container {
+            margin: 10px;
+        }
         .card {
-            /*flex: 0 0 250px;*/
             display: flex;
             flex-flow: column;
 
@@ -47,6 +56,9 @@
 <body>
     <h1 id="title">Loading...</h1>
     <div class="cards" id="data-container"></div>
+    <div class="chart-container" style="position: relative; height:40vh; width:95%">
+        <canvas id="tx-chart"></canvas>
+    </div>
 <script>
     function refreshData() {
         fetch('./data')
@@ -64,8 +76,53 @@
                 });
             });
     }
+    function renderChart(dataset) {
+        const ctx = document.getElementById('tx-chart');
+        new Chart(ctx, {
+            type: 'line',
+            data: {
+                datasets: [{
+                    label: "Transactions",
+                    data: dataset
+                }]
+            },
+            options: {
+                parsing: false,
+                normalized: true,
+                animation: false,
+                spanGaps: true,
+                elements: {
+                    point: {
+                        radius: 0
+                    }
+                },
+                scales: {
+                    x: {
+                        type: 'timeseries',
+                        time: {
+                            displayFormats: {
+                                'day': 'yyyy-MM-dd'
+                            }
+                        }
+                    },
+                    y: {
+                        // type: 'logarithmic'
+                    },
+                }
+            }
+        });
+    }
+    function refreshChart() {
+        fetch('./txs-over-time')
+            .then(response => response.json())
+            .catch(error => { console.error('Error:', error) })
+            .then(data => {
+                renderChart(data);
+            });
+    }
     setInterval(refreshData, 60000);
     refreshData();
+    refreshChart();
 </script>
 </body>
 </html>
